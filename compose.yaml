@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:18
+    container_name: postgres-dev
+    env_file: .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  webapp:
+    image: webapp:0.3
+    command: >
+      sh -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 config.wsgi:application --workers 3"
+    restart: always
+    env_file: .env
+    ports:
+      - "8000:8000"
+
+
+
+volumes:
+    postgres_data:
