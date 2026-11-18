@@ -1,10 +1,23 @@
 from datetime import date, timedelta
 from django.contrib import messages
+from django.db import connection
 from django.db.models import Count, Q, Sum
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from .models import Project, Task
+
+
+@require_GET
+def health_check(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+        return JsonResponse({"status": "ok"}, status=200)
+    except Exception:
+        return JsonResponse({"status": "error"}, status=503)
 
 
 def dashboard(request):

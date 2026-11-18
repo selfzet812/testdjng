@@ -3,22 +3,109 @@ services:
     image: postgres:18
     container_name: postgres-dev
     env_file: .env
-    ports:
-      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    networks:
+       - backend_net
+    read_only: true
+    tmpfs:
+      - /var/run/postgresql
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    
+
 
 
   webapp:
-    image: webapp:0.3
+    build: . 
     command: >
-      sh -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 config.wsgi:application --workers 3"
+      sh -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 config.wsgi:application --workers 3"
     restart: always
     env_file: .env
-    ports:
-      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - static_volume:/app/staticfiles
+    networks:
+      - backend_net
+      - frontend_net
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+
+
+
+  nginx:
+    image: nginx:1.31-alpine
+    ports: 
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/staticfiles:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - frontend_net
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETGID
+      - SETUID
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --no-check-certificate http://127.0.0.1:80/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3 
+    depends_on:
+      webapp:
+        condition: service_healthy
+
 
 
 
 volumes:
-    postgres_data:
+  postgres_data:
+  static_volume:
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge
+    internal: true

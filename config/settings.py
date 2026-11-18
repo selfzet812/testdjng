@@ -37,6 +37,9 @@ ALLOWED_HOSTS = [
     for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,*").split(",")
     if host.strip()
 ]
+for _local_host in ("localhost", "127.0.0.1"):
+    if _local_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_local_host)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
