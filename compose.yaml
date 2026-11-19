@@ -27,10 +27,7 @@ services:
       - FOWNER
       - SETGID
       - SETUID
-    
-
-
-
+      
   webapp:
     build: . 
     command: >
@@ -58,10 +55,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-
-
-
-
   nginx:
     image: nginx:1.31-alpine
     ports: 
@@ -95,14 +88,9 @@ services:
     depends_on:
       webapp:
         condition: service_healthy
-
-
-
-
 volumes:
   postgres_data:
   static_volume:
-
 networks:
   frontend_net:
     driver: bridge
