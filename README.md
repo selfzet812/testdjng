@@ -41,7 +41,7 @@ cp .env.example .env
 
 ## Запуск через Docker
 
-Все файлы для контейнеризации находятся в директории `docker/` (`compose.yaml`, `Dockerfile`, `Dockerfile.dockerignore`, `generate_ssl.sh`, `nginx/`). Стек поднимает три сервиса: **PostgreSQL 18** (`db`), **Django + Gunicorn** (`webapp`) и **Nginx с HTTPS** (`nginx`).
+Все файлы для контейнеризации находятся в директории `docker/` (`compose.yaml`, `Dockerfile`, `.dockerignore`, `generate_ssl.sh`, `nginx/`). Стек поднимает три сервиса: **PostgreSQL 18** (`db`), **Django + Gunicorn** (`webapp`) и **Nginx с HTTPS** (`nginx`).
 
 ### 1. Подготовьте `.env` в корне репозитория
 Скопируйте шаблон и укажите `POSTGRES_HOST=db` (имя сервиса БД в `docker/compose.yaml`), иначе `webapp` не сможет подключиться к базе:
