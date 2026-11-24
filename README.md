@@ -38,3 +38,67 @@ cp .env.example .env
    ```bash
    python manage.py runserver 0.0.0.0:8000
    ```
+
+## Запуск через Docker
+
+Все файлы для контейнеризации находятся в директории `docker/` (`compose.yaml`, `Dockerfile`, `Dockerfile.dockerignore`, `generate_ssl.sh`, `nginx/`). Стек поднимает три сервиса: **PostgreSQL 18** (`db`), **Django + Gunicorn** (`webapp`) и **Nginx с HTTPS** (`nginx`).
+
+### 1. Подготовьте `.env` в корне репозитория
+Скопируйте шаблон и укажите `POSTGRES_HOST=db` (имя сервиса БД в `docker/compose.yaml`), иначе `webapp` не сможет подключиться к базе:
+
+```bash
+cp .env.example .env
+```
+
+Проверьте ключевые значения в `.env`:
+- `POSTGRES_HOST=db` *(обязательно для Docker)*
+- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`
+- `DJANGO_SECRET_KEY` и `DJANGO_DEBUG=False` (для продакшена)
+
+### 2. Сгенерируйте SSL-сертификат для Nginx
+Без сертификатов в `docker/nginx/ssl/` контейнер `nginx` не стартует. Скрипт можно запускать из корня или из папки `docker/`, передав IP/домен сервера (по умолчанию `127.0.0.1`):
+
+```bash
+./docker/generate_ssl.sh 127.0.0.1
+```
+
+### 3. Соберите и запустите стек
+Убедитесь, что на хосте свободны порты **80** и **443**.
+
+Из папки `docker/`:
+```bash
+cd docker
+docker compose up --build -d
+```
+
+Или из корня репозитория:
+```bash
+docker compose -f docker/compose.yaml up --build -d
+```
+
+При старте `webapp` автоматически дождётся готовности PostgreSQL, применит миграции (`migrate`) и соберёт статику (`collectstatic`).
+
+### 4. Проверка и управление
+- Приложение доступно по `https://<ваш-хост>` (HTTP на 80 порту автоматически редиректит на HTTPS; для самоподписанного сертификата браузер покажет предупреждение).
+- Проверить статус и healthcheck'и:
+  ```bash
+  docker compose -f docker/compose.yaml ps
+  ```
+- Посмотреть логи:
+  ```bash
+  docker compose -f docker/compose.yaml logs -f
+  ```
+- Остановить контейнеры (данные БД сохранятся в volume `postgres_data`):
+  ```bash
+  docker compose -f docker/compose.yaml down
+  ```
+
+### Ручная сборка образа (без Compose)
+Контекстом сборки должен оставаться корень проекта:
+```bash
+# из корня репозитория
+docker build -f docker/Dockerfile -t flowboard .
+
+# или из папки docker/
+cd docker && docker build -f Dockerfile -t flowboard ..
+```

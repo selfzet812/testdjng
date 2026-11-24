@@ -2,7 +2,8 @@
 set -euo pipefail
 
 
-OUT_DIR="nginx/ssl"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OUT_DIR="$SCRIPT_DIR/nginx/ssl"
 DAYS=365
 HOST="${1:-127.0.0.1}"
 mkdir -p "$OUT_DIR"
