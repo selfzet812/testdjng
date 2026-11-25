@@ -17,8 +17,7 @@ jobs:
           python-version: "3.12"
           cache: "pip"
       - name: install packages
-        run: |
-          pip install ruff
+        run: pip install ruff
       - name: Run linter
         run: ruff check .
   Unit-Tests:
@@ -32,15 +31,14 @@ jobs:
           python-version: "3.12"
           cache: "pip"
       - name: install packages
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
       - name: Run django test
         run: python manage.py test
   Integration-Test:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16-alpine
+        image: postgres:18
         env:
           POSTGRES_DB: flowboard
           POSTGRES_USER: postgres
@@ -68,7 +66,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run migrations
         run: python manage.py migrate --noinput
-      - name: Smoke test with gunicorn
+      - name: test with gunicorn
         run: |
           gunicorn config.wsgi:application --bind 127.0.0.1:8000 --daemon
           sleep 2
@@ -116,7 +114,6 @@ jobs:
             type=sha,prefix=sha-
             type=raw,value=latest
       - name: Build and push
-        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
