@@ -1,6 +1,7 @@
 from datetime import date, timedelta
+
 from django.contrib import messages
-from django.db import connection
+from django.db import DatabaseError, InterfaceError, connection
 from django.db.models import Count, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -16,7 +17,7 @@ def health_check(request):
             cursor.execute("SELECT 1")
             cursor.fetchone()
         return JsonResponse({"status": "ok"}, status=200)
-    except Exception:
+    except (DatabaseError, InterfaceError):
         return JsonResponse({"status": "error"}, status=503)
 
 

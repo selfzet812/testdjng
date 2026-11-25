@@ -1,8 +1,10 @@
+from typing import ClassVar
+
 from django.db import models
 
 
 class Project(models.Model):
-    COLOR_CHOICES = [
+    COLOR_CHOICES: ClassVar[list[tuple[str, str]]] = [
         ("indigo", "Indigo"),
         ("emerald", "Emerald"),
         ("amber", "Amber"),
@@ -19,7 +21,7 @@ class Project(models.Model):
     updated_at = models.DateTimeField("Обновлен", auto_now=True)
 
     class Meta:
-        ordering = ["-created_at"]
+        ordering: ClassVar[list[str]] = ["-created_at"]
         verbose_name = "Проект"
         verbose_name_plural = "Проекты"
 
@@ -79,7 +81,7 @@ class Task(models.Model):
     updated_at = models.DateTimeField("Обновлено", auto_now=True)
 
     class Meta:
-        ordering = [
+        ordering: ClassVar[list] = [
             models.Case(
                 models.When(priority="critical", then=0),
                 models.When(priority="high", then=1),
