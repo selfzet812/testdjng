@@ -36,12 +36,6 @@ jobs:
         run: python manage.py test
   Integration-Test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:18
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 5
     env:
       DJANGO_SECRET_KEY: testsecret
       DJANGO_DEBUG: "False"
@@ -50,6 +44,12 @@ jobs:
       POSTGRES_PASSWORD: postgres
       POSTGRES_HOST: localhost
       POSTGRES_PORT: "5432"
+    services:
+      postgres:
+        image: postgres:18
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 5
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
