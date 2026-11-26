@@ -39,18 +39,18 @@ jobs:
     env:
       DJANGO_SECRET_KEY: testsecret
       DJANGO_DEBUG: "False"
-      POSTGRES_DB: $POSTGRES_DB
-      POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: "POSTGRES_DB"
+      POSTGRES_USER: "POSTGRES_USER"
+      POSTGRES_PASSWORD: "POSTGRES_PASSWORD"
       POSTGRES_HOST: localhost
       POSTGRES_PORT: "5432"
     services:
       postgres:
         image: postgres:18
         env:
-          POSTGRES_DB: $POSTGRES_DB
-          POSTGRES_USER: $POSTGRES_USER
-          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 5
