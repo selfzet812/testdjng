@@ -7,15 +7,21 @@
         <div class="p-6">
             <!-- Brand -->
             <div class="flex items-center justify-between mb-8">
-                <a href="{% url 'board:dashboard' %}" class="flex items-center gap-3 group">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition">
+                <a href="{% url 'board:dashboard' %}" class="flex items-center gap-2.5 group min-w-0">
+                    <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
                         </svg>
                     </div>
-                    <div>
-                        <span class="font-bold text-lg tracking-tight text-white block leading-none">FlowBoard</span>
-                        <span class="text-[11px] font-mono text-slate-400">PostgreSQL + Django 5</span>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-lg tracking-tight text-white leading-none">FlowBoard</span>
+                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                {{ app_version }}
+                            </span>
+                        </div>
+                        <span class="text-[11px] font-mono text-slate-400 block mt-1">PostgreSQL + Django 5</span>
                     </div>
                 </a>
             </div>
@@ -88,6 +94,10 @@
             <div class="flex items-center justify-between text-xs text-slate-500">
                 <span>Админ-панель</span>
                 <a href="/admin/" class="font-mono text-slate-400 hover:text-indigo-400 transition">/admin &rarr;</a>
+            </div>
+            <div class="px-3 py-2 rounded-xl bg-surface-900/70 border border-slate-800/90 text-[11px] font-mono text-slate-400 flex items-center gap-2" title="Pod: {{ pod_name }}">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                <span class="truncate">Pod: {{ pod_name }}</span>
             </div>
         </div>
     </aside>

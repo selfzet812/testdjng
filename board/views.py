@@ -1,3 +1,4 @@
+import socket
 from datetime import date, timedelta
 
 from django.contrib import messages
@@ -97,6 +98,8 @@ def dashboard(request):
         "status_choices": Task.Status.choices,
         "priority_choices": Task.Priority.choices,
         "color_choices": Project.COLOR_CHOICES,
+        "app_version": "v2.0 • GitOps",
+        "pod_name": socket.gethostname(),
         "stats": {
             "total": total_count,
             "done": done_count,
